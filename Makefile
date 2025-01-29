@@ -1,2 +1,2 @@
 default:
-	gcc server.c -o server
+	gcc -o app server.c error.c

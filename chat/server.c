@@ -7,21 +7,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-// socket
-
-// bind
-
-// listen
-
-// accept connection from client
-
-// read the client write
-
-// write to client
-
+// Terminate the program if the port number is not provided
 int main(int argc, char *argv[]) {
   if (argc < 2) {
-    fprintf(stderr, "Port number not provided. Terminating program.\n");
+    fprintf(stderr, "Error! Port number not provided.\n");
     exit(1);
   }
 
@@ -45,11 +34,12 @@ int main(int argc, char *argv[]) {
   serv_addr.sin_addr.s_addr = INADDR_ANY;
   serv_addr.sin_port = htons(portNum);
 
+  // Bind the socket
   if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
     error("Binding failed");
   }
 
-  // Allow 5 clients maximum
+  // Listen for clients and allow a maximum of 5
   listen(sockfd, 5);
   clilen = sizeof(cli_addr);
 
@@ -59,7 +49,9 @@ int main(int argc, char *argv[]) {
     error("Error on accept");
   }
 
+  // Launch the chat
   while (1) {
+    // Read from the client
     bzero(buffer, 255);
     n = read(newsockfd, buffer, 255);
     if (n < 0) {
@@ -69,6 +61,7 @@ int main(int argc, char *argv[]) {
     bzero(buffer, 255);
     fgets(buffer, 255, stdin);
 
+    // Write to the client
     n = write(newsockfd, buffer, strlen(buffer));
     if (n < 0) {
       error("Error on write");

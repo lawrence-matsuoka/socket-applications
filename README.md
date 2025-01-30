@@ -1,4 +1,4 @@
-# sockets
+# socket-applications
 
 ## chat
 

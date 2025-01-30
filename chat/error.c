@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 
 // Error function
-void error(const char *msg) {
-  perror(msg);
+void error(const char *warning) {
+  perror(warning);
   exit(1);
 }

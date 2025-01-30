@@ -13,7 +13,6 @@ Either the IP address of the server can be used or you can replace the parameter
 Run `ifconfig` in terminal to get the IP address of the server machine.
 
 ### To-do
-- Write code to be able to exit gracefully (detect keyword "exit" probably)
 
 ## client server calculator
 

@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Initialize the socket
-  int sockfd, newsockfd, portnum, n;
+  int sockfd, newsockfd, portNum, n;
   char buffer[255];
 
   struct sockaddr_in serv_addr, cli_addr;
@@ -39,17 +39,17 @@ int main(int argc, char *argv[]) {
   }
 
   bzero((char *)&serv_addr, sizeof(serv_addr));
-  portnum = atoi(argv[1]);
+  portNum = atoi(argv[1]);
 
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_addr.s_addr = INADDR_ANY;
-  serv_addr.sin_port = htons(portnum);
+  serv_addr.sin_port = htons(portNum);
 
   if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
     error("Binding failed");
   }
 
-  // listen, 5 for maximum limit of clients
+  // Allow 5 clients maximum
   listen(sockfd, 5);
   clilen = sizeof(cli_addr);
 
@@ -74,7 +74,8 @@ int main(int argc, char *argv[]) {
       error("Error on write");
     }
 
-    int i = strncmp("Bye", buffer, 3);
+    // Disconnect the server when "server-exit" is sent in chat
+    int i = strncmp("server-exit", buffer, 11);
     if (i == 0) {
       break;
     }

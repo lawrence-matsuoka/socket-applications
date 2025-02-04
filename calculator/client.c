@@ -14,8 +14,8 @@ int main(int argc, char *argv[]) {
   struct sockaddr_in serv_addr;
   struct hostent *server;
 
-  // ensure user provides all three arguments (filename, server ip address, port number)
-  // argv[0] = filename
+  // ensure user provides all three arguments (filename, server ip address, port
+  // number) argv[0] = filename
   char buffer[255];
   if (argc < 3) {
     fprintf(stderr, "usage %s hostname port\n", argv[0]);
@@ -45,34 +45,57 @@ int main(int argc, char *argv[]) {
     error("Connection failed");
   }
 
-  // Launch the chat
-  while (1) {
-    // Write to the server
-    bzero(buffer, 255);
-    fgets(buffer, 255, stdin);
-    n = write(sockfd, buffer, strlen(buffer));
-    if (n < 0) {
-      error("Error on write");
-    }
+  // Initialize the variables for the calculations
+  int firstNumber, secondNumber, operation, answer;
 
-    // Read from the server
-    bzero(buffer, 255);
-    n = read(sockfd, buffer, 255);
-    if (n < 0) {
-      error("Error on read");
-    }
+S:
+  // Receive the prompt and send the first number to the server
+  bzero(buffer, 255);
+  n = read(sockfd, buffer, 255);
+  if (n < 0) {
+    error("Error reading from socket");
+  }
+  printf("First number sent to server: %s\n", buffer);
+  scanf("%d", &firstNumber);
+  write(sockfd, &firstNumber, sizeof(int));
 
-    // Show incoming messages from the server
-    printf("Server: %s", buffer);
+  // Receive the prompt and send the second number to the server
+  bzero(buffer, 255);
+  n = read(sockfd, buffer, 255);
+  if (n < 0) {
+    error("Error reading from socket");
+  }
+  printf("Second number sent to server: %s\n", buffer);
+  scanf("%d", &secondNumber);
+  write(sockfd, &secondNumber, sizeof(int));
 
-    // Disconnect the client if "client-exit" is typed in chat by the server
-    int i = strncmp("client-exit", buffer, 11);
-    if (i == 0) {
-      break;
-    }
+  // Receive the prompt and send the operation to the server
+  bzero(buffer, 255);
+  n = read(sockfd, buffer, 255);
+  if (n < 0) {
+    error("Error reading from socket");
+  }
+  printf("Operation sent to server: %s\n", buffer);
+  scanf("%d", &operation);
+  write(sockfd, &operation, sizeof(int));
+
+  // If the user enters 5, exit the program
+  if (operation == 5) {
+    goto Q;
+  }
+
+  // Read the answer to the calculation from the server
+  read(sockfd, &answer, sizeof(int));
+  printf("Server: The answer is %d\n", answer);
+
+  // Continue the program if the user does not exit
+  if (operation != 5) {
+    goto S;
   }
 
   // Close the socket
+Q:
+  printf("You have successfully exited the program");
   close(sockfd);
   return 0;
 }
